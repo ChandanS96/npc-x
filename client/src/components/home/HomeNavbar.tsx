@@ -15,7 +15,7 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({ onNavigate, onEnterWorks
         className="flex items-center gap-3 cursor-pointer group"
       >
         <div className="w-10 h-10 rounded-xl bg-black/60 border border-brand-magenta/40 flex items-center justify-center shadow-lg shadow-brand-magenta/25 group-hover:scale-105 transition-all overflow-hidden p-0.5">
-          <img src="/raze-cyber-shield.jpg" alt="RAZE Shield" className="w-full h-full object-cover rounded-lg" />
+          <img src="/raze-app-icon.jpg" alt="RAZE Shield" className="w-full h-full object-cover rounded-lg" />
         </div>
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">

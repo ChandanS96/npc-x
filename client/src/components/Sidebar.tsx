@@ -35,7 +35,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate, onOpe
       <div className="p-4 border-b border-white/10 flex items-center justify-between">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => onNavigate('/')}>
           <div className="w-11 h-11 rounded-xl bg-black/60 border border-brand-magenta/40 flex items-center justify-center shadow-lg shadow-brand-magenta/25 group-hover:scale-105 transition-all overflow-hidden p-0.5">
-            <img src="/raze-cyber-shield.jpg" alt="RAZE 3D Shield" className="w-full h-full object-cover rounded-lg" />
+            <img src="/raze-app-icon.jpg" alt="RAZE 3D Shield" className="w-full h-full object-cover rounded-lg" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">

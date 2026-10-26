@@ -118,9 +118,9 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ onNavigate }) => {
           <div className="flex flex-col gap-3 min-w-[280px] max-w-[340px] w-full">
             <div className="relative group rounded-xl overflow-hidden border border-brand-magenta/35 shadow-xl shadow-brand-magenta/20 bg-black/80">
               <img 
-                src="/raze-cyber-shield.jpg" 
+                src="/raze-os-brand.jpg" 
                 alt="RAZE OS 3D Cyber Defense Shield" 
-                className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-500" 
+                className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-500" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#030206] via-transparent to-transparent"></div>
               <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between text-[11px] font-mono">
