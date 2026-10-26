@@ -29,13 +29,19 @@ export type QueryIntent = 'GENERAL_ARCHITECTURE' | 'RUN_SPECIFIC';
 
 export class LlmAssistantService {
   private static openaiClient: OpenAI | null = null;
+  private static warnedMissingKey = false;
 
   public static getOpenAIClient(): OpenAI | null {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey || apiKey.trim() === '' || apiKey.includes('your_openai_api_key')) {
+      if (!this.warnedMissingKey) {
+        console.warn('⚠️ [RAZE Assistant] OPENAI_API_KEY is not set (or is placeholder). Using LOCAL_DETERMINISTIC_ENGINE fallback.');
+        this.warnedMissingKey = true;
+      }
       return null;
     }
     if (!this.openaiClient) {
+      console.log('⚡ [RAZE Assistant] Initialized live OpenAI client with configured API key.');
       this.openaiClient = new OpenAI({ apiKey: apiKey.trim() });
     }
     return this.openaiClient;
@@ -116,11 +122,17 @@ export class LlmAssistantService {
       try {
         return await this.generateOpenAIAnswer(openai, model, question, run, history);
       } catch (err: any) {
-        console.error('OpenAI invocation error, falling back to deterministic engine:', err.message);
+        const statusCode = err.status || err.statusCode || 500;
+        console.error(`❌ [RAZE Assistant] OpenAI API Call Failed (HTTP ${statusCode}):`, err.message);
+        if (statusCode === 401) {
+          console.error('👉 Cause: Invalid OpenAI API key. Verify OPENAI_API_KEY in your .env or Vercel environment variables.');
+        } else if (statusCode === 429) {
+          console.error('👉 Cause: OpenAI Rate limit exceeded or Insufficient Quota. Check your billing at platform.openai.com.');
+        }
         const fallback = this.generateDeterministicAnswer(run, question, intent);
         return {
           ...fallback,
-          answer: `*(Notice: OpenAI API call returned [${err.message}]. Provided offline empirical answer below)*\n\n${fallback.answer}`
+          answer: `*(Notice: OpenAI API returned HTTP ${statusCode} [${err.message}]. Served empirical offline analysis below)*\n\n${fallback.answer}`
         };
       }
     }
