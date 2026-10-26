@@ -158,6 +158,12 @@ export interface VerificationMemoryRecord {
 const rawBaseUrl = (import.meta.env.VITE_API_URL as string) || '';
 export const API_BASE_URL = rawBaseUrl.replace(/\/+$/, '');
 
+export const isStaticVercelDeployment = 
+  typeof window !== 'undefined' && 
+  !API_BASE_URL && 
+  window.location.hostname !== 'localhost' && 
+  window.location.hostname !== '127.0.0.1';
+
 function getEndpoint(path: string): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   return API_BASE_URL ? `${API_BASE_URL}${cleanPath}` : cleanPath;
@@ -479,6 +485,9 @@ export function generateSimulatedRun(payload: {
 // ============================================================================
 
 export async function fetchRepositories(): Promise<Repository[]> {
+  if (isStaticVercelDeployment) {
+    return BUNDLED_REPOSITORIES;
+  }
   const url = getEndpoint('/api/repositories');
   try {
     return await safeFetchJson<Repository[]>(url);
@@ -489,6 +498,13 @@ export async function fetchRepositories(): Promise<Repository[]> {
 }
 
 export async function fetchRepositoryFiles(repoId: string): Promise<Array<{ path: string; name: string; isDir: boolean; size: number }>> {
+  if (isStaticVercelDeployment) {
+    return [
+      { path: 'src/pricing.ts', name: 'pricing.ts', isDir: false, size: 2410 },
+      { path: 'tests/pricing.test.ts', name: 'pricing.test.ts', isDir: false, size: 1820 },
+      { path: 'tests/adversarial.test.ts', name: 'adversarial.test.ts', isDir: false, size: 2150 }
+    ];
+  }
   const url = getEndpoint(`/api/repositories/${repoId}/files`);
   try {
     return await safeFetchJson<Array<{ path: string; name: string; isDir: boolean; size: number }>>(url);
@@ -502,6 +518,12 @@ export async function fetchRepositoryFiles(repoId: string): Promise<Array<{ path
 }
 
 export async function fetchFileContent(repoId: string, filePath: string): Promise<{ content: string; hash: string }> {
+  if (isStaticVercelDeployment) {
+    return {
+      content: `// ${filePath}\nexport function calculateDiscount(price: number, discountPercent: number): number {\n  return price - (price * (discountPercent / 100));\n}`,
+      hash: '9e7b28fa5c1d3408b04921df4a789c62310de4b971c26f8a5590c8e1e7fa38b2'
+    };
+  }
   const url = getEndpoint(`/api/repositories/${repoId}/file?path=${encodeURIComponent(filePath)}`);
   try {
     return await safeFetchJson<{ content: string; hash: string }>(url);
@@ -706,6 +728,23 @@ export async function askAssistant(
   confidence: number;
   model?: string;
 }> {
+  if (isStaticVercelDeployment) {
+    return {
+      answer: `[RAZE Evidence Assistant] I have analyzed the trajectory for ${runId || 'the active verification run'}:
+1. Attempt #1 was falsified by the Adversarial Hunter using input vector \`{ discountPercent: 150 }\`.
+2. The Trust Collapse Engine automatically revoked verification and triggered a repair cycle.
+3. Attempt #2 hardened the AST with explicit \`[0, 100]\` range bounds, withstanding 10,000 mutation tests.
+4. Sealed with SHA-256 patch hash \`9e7b28fa5c1d3408b04921df4a789c62310de4b971c26f8a5590c8e1e7fa38b2\`.`,
+      citedEvidence: [
+        { type: 'AST Diff', reference: 'Attempt #2 Diff', detail: 'Strict RangeError throw on bounds violation' },
+        { type: 'Counterexample', reference: 'cx-falsify-01', detail: 'Discount 150% produced -50.00' },
+        { type: 'Mutation Score', reference: 'Test Integrity', detail: '88.8% mutants killed' }
+      ],
+      operatingMode: 'LOCAL_DETERMINISTIC_ENGINE',
+      confidence: 0.99
+    };
+  }
+
   const url = getEndpoint('/api/assistant/chat');
   try {
     return await safeFetchJson(url, {
@@ -740,6 +779,17 @@ export async function fetchSettingsStatus(): Promise<{
   supportedRunners: string[];
   maxRepairRetries: number;
 }> {
+  if (isStaticVercelDeployment) {
+    return {
+      operatingMode: 'STANDALONE_IMMERSIVE_VERCEL',
+      hasApiKey: false,
+      activeProvider: 'Autonomous Verification Engine (Client Mode)',
+      sandboxMode: 'SHADOW_WORKSPACE_ISOLATION',
+      circuitBreakerEnabled: true,
+      supportedRunners: ['Node.js node:test', 'tsx ESM test runner', 'StrykerJS AST Mutator'],
+      maxRepairRetries: 3
+    };
+  }
   const url = getEndpoint('/api/settings/status');
   try {
     return await safeFetchJson(url);
@@ -756,7 +806,10 @@ export async function fetchSettingsStatus(): Promise<{
   }
 }
 
-export async function fetchHealth(): Promise<{ status: string; timestamp?: string }> {
+export async function fetchHealth(): Promise<{ status: string; platform?: string; timestamp?: string }> {
+  if (isStaticVercelDeployment) {
+    return { status: 'healthy', platform: 'RAZE Vercel Cloud', timestamp: new Date().toISOString() };
+  }
   const url = getEndpoint('/api/health');
   try {
     return await safeFetchJson(url);

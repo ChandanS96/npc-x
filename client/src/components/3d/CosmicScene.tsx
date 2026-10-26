@@ -416,14 +416,17 @@ export const CosmicScene: React.FC<CosmicSceneProps> = ({
     window.addEventListener('resize', handleResize);
 
     // ==============================================================
-    // 11. REAL-TIME ANIMATION LOOP (Using standard THREE.Clock)
+    // 11. REAL-TIME ANIMATION LOOP (High-precision performance.now)
     // ==============================================================
-    const clock = new THREE.Clock();
+    const startTime = performance.now();
+    let lastTime = startTime;
 
     let animationFrameId: number;
     const animate = () => {
-      const delta = clock.getDelta();
-      const elapsedTime = clock.getElapsedTime();
+      const now = performance.now();
+      const delta = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+      const elapsedTime = (now - startTime) / 1000;
 
       // Smooth mouse interpolation
       mouse.current.x += (mouse.current.targetX - mouse.current.x) * 0.05;

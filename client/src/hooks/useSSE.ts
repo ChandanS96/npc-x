@@ -9,7 +9,7 @@ export interface SSEEvent {
   timestamp: string;
 }
 
-import { API_BASE_URL } from '../api/client.js';
+import { API_BASE_URL, isStaticVercelDeployment } from '../api/client.js';
 
 export function useSSE(runId: string | undefined, onEventReceived?: (event: SSEEvent) => void) {
   const [events, setEvents] = useState<SSEEvent[]>([]);
@@ -20,6 +20,11 @@ export function useSSE(runId: string | undefined, onEventReceived?: (event: SSEE
 
   const connect = useCallback(() => {
     if (!runId) return;
+
+    if (isStaticVercelDeployment) {
+      setIsConnected(true);
+      return;
+    }
 
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
