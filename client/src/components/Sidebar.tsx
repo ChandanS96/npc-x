@@ -32,10 +32,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate, onOpe
   return (
     <aside className="w-64 flex-shrink-0 bg-[#030206]/85 backdrop-blur-2xl border-r border-white/10 flex flex-col h-screen select-none relative z-30 shadow-2xl">
       {/* Brand Header */}
-      <div className="p-5 border-b border-white/10 flex items-center justify-between">
+      <div className="p-4 border-b border-white/10 flex items-center justify-between">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => onNavigate('/')}>
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-neon via-brand-violet to-brand-magenta flex items-center justify-center shadow-lg shadow-brand-magenta/25 group-hover:scale-105 transition-transform">
-            <Shield className="w-6 h-6 text-white" />
+          <div className="w-11 h-11 rounded-xl bg-black/60 border border-brand-magenta/40 flex items-center justify-center shadow-lg shadow-brand-magenta/25 group-hover:scale-105 transition-all overflow-hidden p-0.5">
+            <img src="/raze-cyber-shield.jpg" alt="RAZE 3D Shield" className="w-full h-full object-cover rounded-lg" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">

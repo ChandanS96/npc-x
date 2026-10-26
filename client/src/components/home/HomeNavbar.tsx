@@ -12,17 +12,22 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({ onNavigate, onEnterWorks
       {/* Brand Logo */}
       <div
         onClick={() => onNavigate('/')}
-        className="flex items-center gap-2.5 cursor-pointer group"
+        className="flex items-center gap-3 cursor-pointer group"
       >
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-neon to-brand-violet flex items-center justify-center text-white shadow-lg shadow-brand-neon/25 group-hover:scale-105 transition-transform">
-          <Shield className="w-5 h-5 fill-current" />
+        <div className="w-10 h-10 rounded-xl bg-black/60 border border-brand-magenta/40 flex items-center justify-center shadow-lg shadow-brand-magenta/25 group-hover:scale-105 transition-all overflow-hidden p-0.5">
+          <img src="/raze-cyber-shield.jpg" alt="RAZE Shield" className="w-full h-full object-cover rounded-lg" />
         </div>
         <div className="flex flex-col">
-          <span className="font-extrabold tracking-widest text-base text-white group-hover:text-brand-magenta transition-colors">
-            RAZE
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span className="font-extrabold tracking-widest text-base text-white group-hover:text-brand-magenta transition-colors">
+              RAZE
+            </span>
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-brand-magenta/15 text-brand-magenta border border-brand-magenta/30">
+              OS
+            </span>
+          </div>
           <span className="text-[9px] tracking-wider text-text-muted font-mono uppercase">
-            Autonomous Ecosystem
+            Self-Protecting Ecosystem
           </span>
         </div>
       </div>

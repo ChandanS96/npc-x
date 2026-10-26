@@ -114,39 +114,59 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ onNavigate }) => {
             </div>
           </div>
 
-          {/* Quick Architecture Mini-Card */}
-          <div className="p-4 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10 space-y-2.5 min-w-[260px] text-xs font-mono shadow-glass">
-            <div className="text-[11px] uppercase font-bold text-white/50 flex items-center justify-between">
-              <span>Verification Pipeline</span>
-              <span className="text-status-pass font-bold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-status-pass agent-running-pulse"></span>
-                Active
-              </span>
+          {/* 3D Cyber Defense Visual & Pipeline Showcase */}
+          <div className="flex flex-col gap-3 min-w-[280px] max-w-[340px] w-full">
+            <div className="relative group rounded-xl overflow-hidden border border-brand-magenta/35 shadow-xl shadow-brand-magenta/20 bg-black/80">
+              <img 
+                src="/raze-cyber-shield.jpg" 
+                alt="RAZE OS 3D Cyber Defense Shield" 
+                className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-500" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#030206] via-transparent to-transparent"></div>
+              <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between text-[11px] font-mono">
+                <span className="flex items-center gap-1.5 text-white/90 font-semibold">
+                  <span className="w-2 h-2 rounded-full bg-status-pass shadow-[0_0_8px_#10B981] animate-pulse"></span>
+                  Trust Collapse Engine
+                </span>
+                <span className="px-1.5 py-0.5 rounded bg-brand-magenta/20 text-brand-magenta text-[10px] border border-brand-magenta/40">
+                  RAZE OS
+                </span>
+              </div>
             </div>
-            <div className="space-y-1.5 text-[11px]">
-              <div className="flex items-center gap-2 text-text-secondary">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-neon"></span>
-                <span>Stage 1: Reproduce Defect Baseline</span>
+
+            <div className="p-3.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10 space-y-2 text-xs font-mono shadow-glass">
+              <div className="text-[11px] uppercase font-bold text-white/50 flex items-center justify-between">
+                <span>Verification Pipeline</span>
+                <span className="text-status-pass font-bold flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-status-pass agent-running-pulse"></span>
+                  Active
+                </span>
               </div>
-              <div className="flex items-center gap-2 text-text-secondary">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-violet"></span>
-                <span>Stage 2: Bounded Minimal Patching</span>
-              </div>
-              <div className="flex items-center gap-2 text-status-warning">
-                <span className="w-1.5 h-1.5 rounded-full bg-status-warning"></span>
-                <span>Stage 3: Adversarial Counterexamples</span>
-              </div>
-              <div className="flex items-center gap-2 text-status-blocked font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-status-blocked"></span>
-                <span>Stage 4: Trust Collapse & Auto-Block</span>
-              </div>
-              <div className="flex items-center gap-2 text-brand-magenta">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-magenta"></span>
-                <span>Stage 5: AST Mutation Test Trust</span>
-              </div>
-              <div className="flex items-center gap-2 text-status-pass">
-                <span className="w-1.5 h-1.5 rounded-full bg-status-pass"></span>
-                <span>Stage 6: Deterministic Policy Gate</span>
+              <div className="space-y-1.5 text-[11px]">
+                <div className="flex items-center gap-2 text-text-secondary">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-neon"></span>
+                  <span>Stage 1: Reproduce Defect Baseline</span>
+                </div>
+                <div className="flex items-center gap-2 text-text-secondary">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-violet"></span>
+                  <span>Stage 2: Bounded Minimal Patching</span>
+                </div>
+                <div className="flex items-center gap-2 text-status-warning">
+                  <span className="w-1.5 h-1.5 rounded-full bg-status-warning"></span>
+                  <span>Stage 3: Adversarial Counterexamples</span>
+                </div>
+                <div className="flex items-center gap-2 text-status-blocked font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-status-blocked"></span>
+                  <span>Stage 4: Trust Collapse & Auto-Block</span>
+                </div>
+                <div className="flex items-center gap-2 text-brand-magenta">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-magenta"></span>
+                  <span>Stage 5: AST Mutation Test Trust</span>
+                </div>
+                <div className="flex items-center gap-2 text-status-pass">
+                  <span className="w-1.5 h-1.5 rounded-full bg-status-pass"></span>
+                  <span>Stage 6: Deterministic Policy Gate</span>
+                </div>
               </div>
             </div>
           </div>
