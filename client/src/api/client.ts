@@ -755,3 +755,13 @@ export async function fetchSettingsStatus(): Promise<{
     };
   }
 }
+
+export async function fetchHealth(): Promise<{ status: string; timestamp?: string }> {
+  const url = getEndpoint('/api/health');
+  try {
+    return await safeFetchJson(url);
+  } catch (err) {
+    return { status: 'offline', timestamp: new Date().toISOString() };
+  }
+}
+

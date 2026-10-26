@@ -12,7 +12,7 @@ import {
   Terminal,
   Database
 } from 'lucide-react';
-import { fetchSettingsStatus } from '../api/client.js';
+import { fetchSettingsStatus, fetchHealth } from '../api/client.js';
 
 export const SettingsPage: React.FC = () => {
   const [status, setStatus] = useState<any>(null);
@@ -24,7 +24,7 @@ export const SettingsPage: React.FC = () => {
       setLoading(true);
       const [settingsData, healthRes] = await Promise.all([
         fetchSettingsStatus(),
-        fetch('/api/health').then((r) => r.json())
+        fetchHealth()
       ]);
       setStatus(settingsData);
       setHealth(healthRes);

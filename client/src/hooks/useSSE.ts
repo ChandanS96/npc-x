@@ -9,11 +9,14 @@ export interface SSEEvent {
   timestamp: string;
 }
 
+import { API_BASE_URL } from '../api/client.js';
+
 export function useSSE(runId: string | undefined, onEventReceived?: (event: SSEEvent) => void) {
   const [events, setEvents] = useState<SSEEvent[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const eventSourceRef = useRef<EventSource | null>(null);
   const lastEventIdRef = useRef<string>('');
+  const retryCountRef = useRef<number>(0);
 
   const connect = useCallback(() => {
     if (!runId) return;
@@ -22,23 +25,28 @@ export function useSSE(runId: string | undefined, onEventReceived?: (event: SSEE
       eventSourceRef.current.close();
     }
 
-    const url = `/api/runs/${runId}/events${lastEventIdRef.current ? `?lastEventId=${lastEventIdRef.current}` : ''}`;
+    const path = `/api/runs/${runId}/events${lastEventIdRef.current ? `?lastEventId=${lastEventIdRef.current}` : ''}`;
+    const url = API_BASE_URL ? `${API_BASE_URL}${path}` : path;
     const es = new EventSource(url);
     eventSourceRef.current = es;
 
     es.onopen = () => {
       setIsConnected(true);
+      retryCountRef.current = 0;
     };
 
     es.onerror = () => {
       setIsConnected(false);
       es.close();
-      // Auto reconnect after 3 seconds
-      setTimeout(() => {
-        if (eventSourceRef.current === es) {
-          connect();
-        }
-      }, 3000);
+      retryCountRef.current += 1;
+      // Only retry if under 3 attempts to prevent infinite reconnect loop when backend is offline
+      if (retryCountRef.current <= 3) {
+        setTimeout(() => {
+          if (eventSourceRef.current === es) {
+            connect();
+          }
+        }, 5000);
+      }
     };
 
     // Generic listener for SSE messages
