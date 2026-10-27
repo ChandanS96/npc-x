@@ -16,7 +16,9 @@ export function App() {
   const [currentPath, setCurrentPath] = useState<string>(() => {
     return window.location.pathname || '/';
   });
-  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [isAssistantOpen, setIsAssistantOpen] = useState(() => {
+    return typeof window !== 'undefined' && (window.location.pathname === '/verify/new' || window.location.pathname === '/workspace');
+  });
 
   useEffect(() => {
     const handlePopState = () => {
@@ -29,6 +31,9 @@ export function App() {
   const navigate = (path: string) => {
     window.history.pushState({}, '', path);
     setCurrentPath(path);
+    if (path === '/verify/new') {
+      setIsAssistantOpen(true);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -55,7 +60,12 @@ export function App() {
       return <RepositoriesPage onNavigate={navigate} />;
     }
     if (currentPath === '/verify/new') {
-      return <NewVerificationPage onNavigate={navigate} />;
+      return (
+        <NewVerificationPage
+          onNavigate={navigate}
+          onOpenAssistant={() => setIsAssistantOpen(true)}
+        />
+      );
     }
     if (currentPath === '/runs') {
       return <RunsHistoryPage onNavigate={navigate} />;

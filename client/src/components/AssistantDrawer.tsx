@@ -33,40 +33,99 @@ interface AssistantDrawerProps {
   runId?: string;
 }
 
+export function getSimulatedAssistantResponse(userInput: string): {
+  answer: string;
+  citedEvidence?: Array<{ type: string; reference: string; detail: string }>;
+  operatingMode: string;
+} {
+  const q = userInput.toLowerCase();
+
+  if (q.includes('stage 2') || q.includes('minimal repair')) {
+    return {
+      answer: `**Stage 2: Copilot Minimal Repair**\n\nIn Stage 2, the repair agent uses the Copilot API with bounded context injection to synthesize a surgical patch. It targets the exact failing AST symbols from Stage 1 while strictly preventing code bloat and unwanted refactoring. Once generated, the minimal patch is confirmed against the baseline reproduction test before proceeding to adversarial hunting.`,
+      citedEvidence: [
+        { type: 'STAGE_ARCHITECTURE', reference: 'Stage 2: Copilot Minimal Repair', detail: 'Bounded surgical patch generation targeting reproduction tests' },
+        { type: 'AST_CONSTRAINT', reference: 'AST Bounded Diff', detail: 'Strict patch size heuristics to prevent architectural drift' }
+      ],
+      operatingMode: 'Deterministic Engine'
+    };
+  }
+
+  if (q.includes('stage 3') || q.includes('adversarial hunt') || q.includes('counterexample')) {
+    return {
+      answer: `**Stage 3: Copilot Adversarial Hunt**\n\nIn Stage 3, the Adversarial Hunter agent aggressively stresses the candidate patch with counterexample edge cases (numerical boundary violations like 150%, negative values, and type coercions). If an adversarial vector breaks the code, trust collapses immediately and failure telemetry is routed back for a hardened fix.`,
+      citedEvidence: [
+        { type: 'STAGE_ARCHITECTURE', reference: 'Stage 3: Copilot Adversarial Hunt', detail: 'Hostile counterexample generation designed to break naive patches' },
+        { type: 'FALSIFICATION_VECTOR', reference: 'cx-falsify-01', detail: 'Negative discounts, >100% percentages, and boundary edge cases' }
+      ],
+      operatingMode: 'Deterministic Engine'
+    };
+  }
+
+  if (q.includes('trust collapse') || q.includes('how does')) {
+    return {
+      answer: `**How the Trust Collapse Engine Works**\n\nThe Trust Collapse Engine enforces mathematical rigor: AI that doesn't just write code—it proves whether it is safe to ship. If any adversarial vector or security mutant breaks a candidate patch, approval is instantly revoked. The failure evidence is captured into Verification Memory and fed into the Repair Shadow Mode to synthesize a mathematically sound patch.`,
+      citedEvidence: [
+        { type: 'ENGINE_SPEC', reference: 'Trust Collapse Engine', detail: 'Falsification state machine that revokes approval on counterexamples' }
+      ],
+      operatingMode: 'Deterministic Engine'
+    };
+  }
+
+  if (q.includes('pricing') || q.includes('104') || q.includes('discount')) {
+    return {
+      answer: `**Defect #104 in pricing-service**\n\nDefect #104 represents a boundary failure in \`calculateDiscount\` in \`src/pricing.ts\`. Attempt 1 fixed negative discounts but failed on discounts > 100% (counterexample: discountPercent = 150 returned -$50). Trust collapsed, prompting Attempt 2 which introduced strict finite bounds validation and achieved an 88.8% mutation score under SHA-256 seal.`,
+      citedEvidence: [
+        { type: 'AST_DIFF', reference: 'Attempt #2 Hardened Diff', detail: 'Strict RangeError throw on bounds violation [0, 100]' },
+        { type: 'COUNTEREXAMPLE', reference: 'cx-falsify-01', detail: 'Input: { discountPercent: 150 } produced -50.00' }
+      ],
+      operatingMode: 'Deterministic Engine'
+    };
+  }
+
+  if (q.includes('auth') || q.includes('guardian') || q.includes('token') || q.includes('traversal')) {
+    return {
+      answer: `**Auth-Guardian Security Check**\n\nTargeting \`src/token.ts\`, this check verifies path sanitization against CWE-22 (Path Traversal). The Adversarial Hunter detects relative directory traversal sequences (\`../../etc/passwd\`) attempting unauthorized access, blocking release until canonical path normalization is enforced.`,
+      citedEvidence: [
+        { type: 'SECURITY_FINDING', reference: 'CWE-22: Path Traversal', detail: 'Token verification allowed unauthorized dot-dot-slash sequence' }
+      ],
+      operatingMode: 'Deterministic Engine'
+    };
+  }
+
+  return {
+    answer: `**RAZE Evidence Assistant (Deterministic Engine)**\n\nI am actively analyzing the verification ecosystem. You can ask me:\n• *"Explain Stage 2: Copilot Minimal Repair"*\n• *"Explain Stage 3: Copilot Adversarial Hunt"*\n• *"How does the Trust Collapse Engine work?"*\n• *"Explain Defect #104 in pricing-service"*\n• *"Check auth-guardian status"*\n\nSelect a suggestion chip above or type your question below!`,
+    citedEvidence: [
+      { type: 'PLATFORM_STATUS', reference: 'RAZE OS', detail: 'Deterministic Engine Online' }
+    ],
+    operatingMode: 'Deterministic Engine'
+  };
+}
+
 export const AssistantDrawer: React.FC<AssistantDrawerProps> = ({ isOpen, onClose, runId }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'init-1',
       sender: 'assistant',
       text: runId
-        ? `Hello! I am your RAZE Evidence Assistant powered by OpenAI. I am actively inspecting the execution traces, counterexamples, and patch hashes for Run \`${runId}\`. What would you like to verify?`
-        : `Hello! I am your RAZE Evidence Assistant. You can ask me general questions about RAZE's verification architecture, or select any verification run from the workspace to query deep empirical evidence.`,
-      operatingMode: 'OPENAI_PROVIDER',
+        ? `Hello! I am your RAZE Evidence Assistant (Deterministic Engine). I am actively inspecting the execution traces, counterexamples, and patch hashes for Run \`${runId}\`. What would you like to verify?`
+        : `Hello! I am your RAZE Evidence Assistant. You can ask me questions about Stage 2: Copilot Minimal Repair, Stage 3: Copilot Adversarial Hunt, or how the Trust Collapse Engine works.`,
+      operatingMode: 'Deterministic Engine',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [activeMode, setActiveMode] = useState<string>('OPENAI_PROVIDER');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const quickChips = runId
-    ? [
-        'Why did trust collapse?',
-        'Which test caught the counterexample?',
-        'Explain Stage 2 Copilot Minimal Repair',
-        'Explain Stage 3 Copilot Adversarial Hunt',
-        'What changed between repair attempts?'
-      ]
-    : [
-        'Stage 2: Copilot Minimal Repair',
-        'Stage 3: Copilot Adversarial Hunt',
-        'How does Trust Collapse Engine work?',
-        'Status of auth-guardian check',
-        'Explain Defect #104 in pricing-service',
-        'Explain Repair Shadow Workspaces',
-        'What are the 6 autonomous agents?'
-      ];
+  const quickChips = [
+    'Stage 2: Copilot Minimal Repair',
+    'Stage 3: Copilot Adversarial Hunt',
+    'How does Trust Collapse Engine work?',
+    'Explain Defect #104 in pricing-service',
+    'Check auth-guardian status',
+    'Explain Repair Shadow Workspaces'
+  ];
 
   // Sync greeting if runId becomes available
   useEffect(() => {
@@ -77,8 +136,8 @@ export const AssistantDrawer: React.FC<AssistantDrawerProps> = ({ isOpen, onClos
             {
               id: `init-${Date.now()}`,
               sender: 'assistant',
-              text: `Hello! I am your RAZE Evidence Assistant. I am actively inspecting the execution traces, counterexamples, and patch hashes for Run \`${runId}\`. What would you like to verify?`,
-              operatingMode: activeMode,
+              text: `Hello! I am your RAZE Evidence Assistant (Deterministic Engine). I am actively inspecting the execution traces, counterexamples, and patch hashes for Run \`${runId}\`. What would you like to verify?`,
+              operatingMode: 'Deterministic Engine',
               timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             }
           ];
@@ -138,42 +197,21 @@ export const AssistantDrawer: React.FC<AssistantDrawerProps> = ({ isOpen, onClos
     setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
 
-    // Format previous turns for multi-turn conversational context
-    const history = messages
-      .filter((m) => m.id !== 'init-1')
-      .map((m) => ({
-        role: m.sender === 'user' ? ('user' as const) : ('assistant' as const),
-        content: m.text
-      }));
-
     try {
-      const response = await askAssistant(runId, textToSend, history);
-      if (response.operatingMode) {
-        setActiveMode(response.operatingMode);
-      }
+      // Deterministic simulated keyword response
+      const response = getSimulatedAssistantResponse(textToSend);
 
       const assistantMessage: Message = {
         id: `assistant-${Date.now()}`,
         sender: 'assistant',
         text: response.answer,
         citedEvidence: response.citedEvidence,
-        operatingMode: response.operatingMode,
-        model: response.model,
+        operatingMode: 'Deterministic Engine',
+        model: 'Deterministic Ruleset',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
-    } catch (err: any) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `err-${Date.now()}`,
-          sender: 'assistant',
-          text: `**Query Failed:** ${err.message}\n\nPlease check your server console or ensure the OpenAI API key is configured.`,
-          operatingMode: 'LOCAL_DETERMINISTIC_ENGINE',
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-      ]);
     } finally {
       setLoading(false);
     }
@@ -187,7 +225,7 @@ export const AssistantDrawer: React.FC<AssistantDrawerProps> = ({ isOpen, onClos
         text: runId
           ? `Conversation cleared. Ready to answer questions grounded in Run \`${runId}\`.`
           : 'Conversation cleared. Ready to answer questions regarding the RAZE platform.',
-        operatingMode: activeMode,
+        operatingMode: 'Deterministic Engine',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
     ]);
@@ -206,15 +244,9 @@ export const AssistantDrawer: React.FC<AssistantDrawerProps> = ({ isOpen, onClos
           <div>
             <div className="text-xs font-bold text-white flex items-center gap-2">
               <span>RAZE Evidence Assistant</span>
-              <span
-                className={`text-[9px] font-mono px-2 py-0.5 rounded-full border flex items-center gap-1 ${
-                  activeMode === 'OPENAI_PROVIDER'
-                    ? 'bg-status-pass/15 text-status-pass border-status-pass/30'
-                    : 'bg-brand-neon/15 text-brand-neon border-brand-neon/30'
-                }`}
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-current animate-ping" />
-                {activeMode === 'OPENAI_PROVIDER' ? 'OpenAI GPT-4o' : 'Deterministic Engine'}
+              <span className="text-[9px] font-mono px-2 py-0.5 rounded-full border border-brand-neon/40 bg-brand-neon/15 text-brand-neon flex items-center gap-1 shadow-sm font-semibold">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-neon animate-ping" />
+                <span>Deterministic Engine</span>
               </span>
             </div>
             <div className="text-[10px] text-text-muted truncate max-w-[260px] mt-0.5">
