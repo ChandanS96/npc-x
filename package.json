@@ -4,14 +4,14 @@
   "description": "RAZE — The Autonomous AI Engineering & Verification Ecosystem with Trust Collapse Engine",
   "scripts": {
     "server": "node --loader tsx server/src/index.ts",
-    "dev:server": "npx.cmd tsx watch server/src/index.ts",
-    "dev:client": "npm.cmd --prefix client run dev",
-    "dev": "npx.cmd concurrently \"npm.cmd run dev:server\" \"npm.cmd run dev:client\"",
-    "build:client": "npm.cmd --prefix client run build",
-    "build:server": "npx.cmd tsc -p server/tsconfig.json",
-    "build": "npm.cmd run build:server && npm.cmd run build:client",
+    "dev:server": "tsx watch server/src/index.ts",
+    "dev:client": "npm --prefix client run dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "build:client": "npm --prefix client run build",
+    "build:server": "tsc -p server/tsconfig.json",
+    "build": "npm run build:client",
     "test": "node --test server/tests/*.test.mjs",
-    "test:unit": "npx.cmd tsx --test server/tests/verification.test.ts",
+    "test:unit": "tsx --test server/tests/verification.test.ts",
     "start": "node dist-server/index.js"
   },
   "keywords": [
