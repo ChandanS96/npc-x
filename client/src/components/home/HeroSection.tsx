@@ -10,9 +10,10 @@ import { useMouseParallax } from '../../hooks/useMouseParallax.js';
 interface HeroSectionProps {
   onNavigate: (path: string) => void;
   onEnterWorkspace: () => void;
+  onOpenAssistant?: () => void;
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, onEnterWorkspace }) => {
+export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, onEnterWorkspace, onOpenAssistant }) => {
   const [isButtonHovered, setIsButtonHovered] = useState(false);
   const [displayMode, setDisplayMode] = useState<'artwork' | '3d' | 'hybrid'>('artwork');
 
@@ -59,7 +60,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, onEnterWor
       </div>
 
       {/* 3. Top Navigation */}
-      <HomeNavbar onNavigate={onNavigate} onEnterWorkspace={onEnterWorkspace} />
+      <HomeNavbar
+        onNavigate={onNavigate}
+        onEnterWorkspace={onEnterWorkspace}
+        onOpenAssistant={onOpenAssistant}
+      />
 
       {/* 4. Three.js Cosmic Canvas (Stardust Particles & Dynamic Lighting) - Parallax Layer 0 */}
       <div

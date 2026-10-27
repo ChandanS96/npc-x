@@ -54,21 +54,74 @@ export const AssistantDrawer: React.FC<AssistantDrawerProps> = ({ isOpen, onClos
     ? [
         'Why did trust collapse?',
         'Which test caught the counterexample?',
-        'What changed between repair attempts?',
-        'Explain the security finding',
-        'Why is the release gate blocking this patch?'
+        'Explain Stage 2 Copilot Minimal Repair',
+        'Explain Stage 3 Copilot Adversarial Hunt',
+        'What changed between repair attempts?'
       ]
     : [
-        'How does the Trust Collapse Engine work?',
+        'Stage 2: Copilot Minimal Repair',
+        'Stage 3: Copilot Adversarial Hunt',
+        'How does Trust Collapse Engine work?',
+        'Status of auth-guardian check',
+        'Explain Defect #104 in pricing-service',
         'Explain Repair Shadow Workspaces',
-        'How are patches cryptographically verified?',
         'What are the 6 autonomous agents?'
       ];
+
+  // Sync greeting if runId becomes available
+  useEffect(() => {
+    if (runId) {
+      setMessages((prev) => {
+        if (prev.length === 1 && prev[0].id.startsWith('init-')) {
+          return [
+            {
+              id: `init-${Date.now()}`,
+              sender: 'assistant',
+              text: `Hello! I am your RAZE Evidence Assistant. I am actively inspecting the execution traces, counterexamples, and patch hashes for Run \`${runId}\`. What would you like to verify?`,
+              operatingMode: activeMode,
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            }
+          ];
+        }
+        return prev;
+      });
+    }
+  }, [runId]);
 
   // Auto-scroll to latest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
+
+  const renderInline = (content: string) => {
+    const parts = content.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} className="text-white font-bold">{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith('`') && part.endsWith('`')) {
+        return (
+          <code key={i} className="font-mono bg-white/10 text-brand-neon px-1 py-0.5 rounded text-[10.5px]">
+            {part.slice(1, -1)}
+          </code>
+        );
+      }
+      return part;
+    });
+  };
+
+  const renderFormattedText = (raw: string) => {
+    return raw.split('\n').map((line, idx) => {
+      if (!line.trim()) {
+        return <div key={idx} className="h-1.5" />;
+      }
+      return (
+        <div key={idx} className="leading-relaxed">
+          {renderInline(line)}
+        </div>
+      );
+    });
+  };
 
   const handleSend = async (questionText?: string) => {
     const textToSend = questionText || input;
@@ -219,7 +272,9 @@ export const AssistantDrawer: React.FC<AssistantDrawerProps> = ({ isOpen, onClos
                   : 'bg-black/60 backdrop-blur-md text-text-primary rounded-tl-none border border-white/10 shadow-glass'
               }`}
             >
-              <div className="whitespace-pre-wrap leading-relaxed">{msg.text}</div>
+              <div className="leading-relaxed space-y-1">
+                {renderFormattedText(msg.text)}
+              </div>
 
               {/* Cited Evidence Tags */}
               {msg.citedEvidence && msg.citedEvidence.length > 0 && (

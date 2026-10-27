@@ -5,12 +5,17 @@ import { BeyondTheOrdinarySection } from '../components/home/BeyondTheOrdinarySe
 interface HomePageProps {
   onNavigate: (path: string) => void;
   onEnterWorkspace: () => void;
+  onOpenAssistant?: () => void;
 }
 
-export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onEnterWorkspace }) => {
+export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onEnterWorkspace, onOpenAssistant }) => {
   return (
     <div className="w-full min-h-screen bg-raze-bg overflow-x-hidden">
-      <HeroSection onNavigate={onNavigate} onEnterWorkspace={onEnterWorkspace} />
+      <HeroSection
+        onNavigate={onNavigate}
+        onEnterWorkspace={onEnterWorkspace}
+        onOpenAssistant={onOpenAssistant}
+      />
       <BeyondTheOrdinarySection onNavigate={onNavigate} />
     </div>
   );
