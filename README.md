@@ -1,6 +1,7 @@
-# RAZE Platform
+# RAZE Platform — HackToBerFest-VVCE (Team t2c2-npc-x)
 ## The Self-Healing, Self-Protecting Autonomous Engineering Ecosystem
 
+> **Project Status:** Repo Access Confirmed & Integrated  
 > **Tagline:** AI that doesn't just write code—it proves whether the code is safe to ship.  
 > **Product Philosophy:** Every fix must face a challenge. Every security claim must have evidence. Every unresolved risk must remain visible. Never claim arbitrary software is "100% Safe".
 
